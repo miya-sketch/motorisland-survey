@@ -44,7 +44,7 @@
   </svg>
 </template>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tech&quot;,&quot;bright&quot;],&quot;default&quot;:&quot;bright&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;zh&quot;,&quot;en&quot;],&quot;default&quot;:&quot;zh&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;reviewThreshold&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;min&quot;:0,&quot;max&quot;:10,&quot;tsType&quot;:&quot;number&quot;},&quot;lineUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://line.me/R/ti/p/@motorisland&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;endpointUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;blockResubmit&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tech&quot;,&quot;bright&quot;],&quot;default&quot;:&quot;bright&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;zh&quot;,&quot;en&quot;],&quot;default&quot;:&quot;zh&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;reviewThreshold&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;min&quot;:0,&quot;max&quot;:10,&quot;tsType&quot;:&quot;number&quot;},&quot;lineUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://line.me/R/ti/p/@motorisland&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;endpointUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://script.google.com/macros/s/AKfycby7mIrufl8U4T0ZLp12gKNoFFGlFK5BMmHbYd1gRMdKgw0_1M8QEBk3YVUWmoU7SYEm/exec&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;blockResubmit&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -76,21 +76,26 @@ class Component extends DCLogic {
     this.BRANCHES = ['新北中和店 / Zhonghe', '新北新莊店 / Xinzhuang', '新北樹林店 / Shulin', '桃園中壢店 / Zhongli', '新竹店 / Hsinchu', '台中旗艦店 / Taichung Flagship', '南台中店 / South Taichung', '台中太平店 / Taiping', '台南店 / Tainan', '高雄店 / Kaohsiung', '花蓮店 / Hualien'];
     // ★ 上線前：把每間店的 Google Place ID 填到 placeId，即會自動產生「直接寫評論」連結。
     //   取得方式：Google 地圖搜尋該店 → 分享 → 或用 place id finder。placeId 留空時自動退回「地圖搜尋」網址（保證可開）。
+    // ★ 上線前每間店填兩個欄位：
+    //   placeId — Google Place ID（產生「直接寫評論」連結；留空自動退回地圖搜尋）
+    //   line    — 該門市自己的官方 LINE 優惠券連結（留空自動退回通用 lineUrl）
     this.stores = [
-      { name: '新北中和店', placeId: '' },
-      { name: '新北新莊店', placeId: '' },
-      { name: '新北樹林店', placeId: '' },
-      { name: '桃園中壢店', placeId: '' },
-      { name: '新竹店', placeId: '' },
-      { name: '台中旗艦店', placeId: '' },
-      { name: '南台中店', placeId: '' },
-      { name: '台中太平店', placeId: '' },
-      { name: '台南店', placeId: '' },
-      { name: '高雄店', placeId: '' },
-      { name: '花蓮店', placeId: '' }
+      { name: '新北中和店', code: 'zhonghe', placeId: '', line: '' },
+      { name: '新北新莊店', code: 'xinzhuang', placeId: '', line: '' },
+      { name: '新北樹林店', code: 'shulin', placeId: '', line: '' },
+      { name: '桃園中壢店', code: 'zhongli', placeId: '', line: '' },
+      { name: '新竹店', code: 'hsinchu', placeId: '', line: '' },
+      { name: '台中旗艦店', code: 'taichung', placeId: '', line: '' },
+      { name: '南台中店', code: 'south-taichung', placeId: '', line: '' },
+      { name: '台中太平店', code: 'taiping', placeId: '', line: '' },
+      { name: '台南店', code: 'tainan', placeId: '', line: '' },
+      { name: '高雄店', code: 'kaohsiung', placeId: '', line: '' },
+      { name: '花蓮店', code: 'hualien', placeId: '', line: '' }
     ].map(function (s) {
       return {
         name: s.name,
+        code: s.code,
+        line: s.line || '',
         url: s.placeId
           ? 'https://search.google.com/local/writereview?placeid=' + s.placeId
           : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('貳輪嶼 ' + s.name)
@@ -115,6 +120,17 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
+    // 讀取來源參數：?store=門市代號 與 ?uid=LINE userId（或由 LIFF 自動帶入）
+    try {
+      var p = new URLSearchParams(window.location.search);
+      this.srcStore = p.get('store') || '';
+      this.lineUid = p.get('uid') || '';
+    } catch (e) { this.srcStore = ''; this.lineUid = ''; }
+    // 若帶了 store 參數，預先選好門市（顧客少填一題）
+    if (this.srcStore && !this.state.q1) {
+      var hit = this.stores.find((s) => s.code === this.srcStore || s.name === this.srcStore);
+      if (hit) this.setState({ q1: hit.name });
+    }
     if (!document.getElementById('__nototc')) {
       var l = document.createElement('link');
       l.id = '__nototc';
@@ -194,7 +210,9 @@ class Component extends DCLogic {
       q4_env: this.state.q4[0] || '', q4_flow: this.state.q4[1] || '', q4_return: this.state.q4[2] || '',
       q5_attitude: this.state.q5[0] || '', q5_knowledge: this.state.q5[1] || '', q5_overall: this.state.q5[2] || '',
       q6_staff: this.state.q6, q7_best: this.state.q7.join('、'), q8_nps: this.state.nps,
-      q9_keywords: this.state.q9, q10_improve: this.state.q10, q12_name: this.state.q12, q13_contact: this.state.q13
+      q9_keywords: this.state.q9, q10_improve: this.state.q10, q12_name: this.state.q12, q13_contact: this.state.q13,
+      // 來源識別（供後端決定用「哪個門市的 LINE 帳號」發券）
+      store: this.srcStore || '', line_uid: this.lineUid || ''
     };
     // === INTEGRATION POINTS (for systems analyst) ===
     // 1. POST `data` to backend / Google Apps Script.
@@ -202,7 +220,7 @@ class Component extends DCLogic {
     // 3. LINE: issue single-use 機油兌換券 into the official LINE chat; write coupon serial back to DMS.
     console.log('[survey submit]', data);
     try { localStorage.setItem('mi_survey_v1_done', '1'); } catch (e) {}   // 標記此裝置已填寫
-    const endpoint = this.props.endpointUrl;
+    const endpoint = this.props.endpointUrl || 'https://script.google.com/macros/s/AKfycby7mIrufl8U4T0ZLp12gKNoFFGlFK5BMmHbYd1gRMdKgw0_1M8QEBk3YVUWmoU7SYEm/exec';
     if (endpoint) {
       // text/plain avoids a CORS preflight; Apps Script reads e.postData.contents
       fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) })
@@ -338,7 +356,8 @@ class Component extends DCLogic {
   renderThanks() {
     const h = React.createElement, T = this.T;
     const showReview = this.state.nps !== null && this.state.nps >= (this.props.reviewThreshold ?? 8);
-    const lineUrl = this.props.lineUrl ?? '#';
+    const branch = this.stores.find((s) => s.name === this.state.q1);
+    const lineUrl = (branch && branch.line) || this.props.lineUrl || '#';
     return h('div', { className: 'scr', style: { flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '64px 26px 60px', textAlign: 'center' } },
       h('div', { style: { width: 76, height: 76, borderRadius: '50%', background: '#3ece29', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, fontWeight: 800, boxShadow: T.dark ? '0 0 26px rgba(62,206,41,.5)' : 'none' } }, '✓'),
       h('div', { style: { fontWeight: 800, fontSize: 25, marginTop: 22, color: T.ink } }, this.bi('感謝您的回饋！', 'Thank you for your feedback!')),
@@ -347,8 +366,8 @@ class Component extends DCLogic {
         h('div', { style: { display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 14 } },
           h('span', { style: { fontWeight: 700, fontSize: 12, color: '#111', background: '#d9ff00', borderRadius: 999, padding: '4px 11px' } }, this.bi('禮物', 'GIFT')),
           h('span', { style: { fontWeight: 600, fontSize: 14, color: T.ink } }, this.bi('機油兌換券', 'Oil-change voucher'))),
-        h('p', { style: { fontWeight: 500, fontSize: 13.5, color: T.sub, lineHeight: 1.6, margin: '0 0 18px' } }, this.bi('您的專屬兌換券將直接發送至官方 LINE 對話中（限本人、限用一次）。', 'Your personal voucher will be sent right here in our official LINE chat (one per person, single use).')),
-        h('a', { href: lineUrl, target: '_blank', rel: 'noopener', style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', background: T.blue, color: '#fff', fontWeight: 700, fontSize: 15, borderRadius: 999, padding: 15, textDecoration: 'none', boxShadow: T.dark ? '0 0 18px rgba(47,139,255,.5)' : '0 10px 24px rgba(5,105,233,.28)' } }, this.bi('填寫完成 · 領取兌換券', 'Done · Claim your voucher'))),
+        h('p', { style: { fontWeight: 500, fontSize: 13.5, color: T.sub, lineHeight: 1.6, margin: '0 0 18px' } }, this.bi('點下方領取官方 LINE 優惠券（每人限領一次）。', 'Tap below to claim your voucher in our official LINE (one per person).')),
+        h('a', { href: lineUrl, target: '_blank', rel: 'noopener', style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', background: T.blue, color: '#fff', fontWeight: 700, fontSize: 15, borderRadius: 999, padding: 15, textDecoration: 'none', boxShadow: T.dark ? '0 0 18px rgba(47,139,255,.5)' : '0 10px 24px rgba(5,105,233,.28)' } }, this.bi('領取機油兌換券', 'Claim oil-change voucher'))),
       showReview ? h('div', { style: { width: '100%', maxWidth: 360, marginTop: 26 } },
         h('div', { style: { fontWeight: 700, fontSize: 13, color: T.blueText, marginBottom: 14 } }, this.bi('如果滿意，歡迎幫我們留下 Google 評論', 'Loved your visit? Leave us a Google review')),
         h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 } }, this.stores.map(s => h('a', { key: s.name, href: s.url, target: '_blank', rel: 'noopener', style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, background: T.card, border: '1px solid ' + T.cardBorder, borderRadius: 10, padding: '12px 14px', textDecoration: 'none', color: T.ink, fontSize: 13, fontWeight: 600 } }, h('span', null, s.name), h('span', { style: { color: T.blueText } }, '↗'))))) : null,
@@ -356,7 +375,9 @@ class Component extends DCLogic {
   }
 
   renderAlready() {
-    const h = React.createElement, T = this.T, lineUrl = this.props.lineUrl ?? '#';
+    const h = React.createElement, T = this.T;
+    const branch = this.stores.find((s) => s.name === this.state.q1);
+    const lineUrl = (branch && branch.line) || this.props.lineUrl || '#';
     return h('div', { style: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 28px', textAlign: 'center' } },
       h('div', { style: { width: 72, height: 72, borderRadius: '50%', background: T.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, fontWeight: 800 } }, '✓'),
       h('div', { style: { fontWeight: 800, fontSize: 23, marginTop: 22, color: T.ink } }, this.bi('您已完成過這份問卷', 'You have already completed this survey')),
